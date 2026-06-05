@@ -1,59 +1,91 @@
-import { keyExists } from "../services/api_keys.service.js";
+import { keyExists } from '../services/api_keys.service.js';
+import { verifyToken } from '../utils/jwt.util.js';
 
 export const authorizeUser = (req, res, next) => {
-  const user = global.user;
-  if (!user) {
-    next({
-      status: 401,
-      message: "User not logged in",
-    });
-  }
-  next();
+    const token = req.headers['authorization']?.split(' ')[1];
+
+    if (!token) {
+        next({
+            status: 401,
+            message: 'No token provided',
+        });
+    }
+
+    const verified = verifyToken(token);
+
+    if (!verified.success) {
+        next({
+            status: 401,
+            message: verified.message,
+        });
+    }
+
+    req.user = verified.user;
+
+    // if (req.user.role !== 'admin') {
+    //     next({
+    //         status: 401,
+    //         message: 'Unauthorized, admin access required',
+    //     });
+    // }
+
+    next();
+};
+
+export const authorizeAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        next({
+            status: 401,
+            message: 'Unauthorized, admin access required',
+        });
+    }
+
+    next();
 };
 
 export const authenticateKey = async (req, res, next) => {
-  const key = req.headers["x-api-key"];
+    const key = req.headers['x-api-key'];
 
-  if (!key) {
-    next({
-      status: 401,
-      message: "No API key provided",
-    });
-  }
+    if (!key) {
+        next({
+            status: 401,
+            message: 'No API key provided',
+        });
+    }
 
-  const result = await keyExists(key);
+    const result = await keyExists(key);
 
-  if (!result.success) {
-    next({
-      status: 401,
-      message: result.message,
-    });
-  }
-  next();
+    if (!result.success) {
+        next({
+            status: 401,
+            message: result.message,
+        });
+    }
+    next();
 };
 
 export const authenticateParams = async (req, res, next) => {
-  const params = req.params;
+    const params = req.params;
 
-  if (!params) {
-    next({
-      status: 401,
-      message: "No params provided",
-    });
-  }
+    if (!params) {
+        next({
+            status: 401,
+            message: 'No params provided',
+        });
+    }
 
-  next();
+    next();
 };
 
 export const authenticateBody = async (req, res, next) => {
-  const body = req.body;
+    const body = req.body;
 
-  if (!body) {
-    next({
-      status: 401,
-      message: "No body provided",
-    });
-  }
+    if (!body) {
+        next({
+            status: 401,
+            message: 'No body provided',
+        });
+    }
 
-  next();
+    next();
 };
