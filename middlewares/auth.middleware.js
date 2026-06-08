@@ -1,7 +1,7 @@
 import { keyExists } from '../services/api_keys.service.js';
 import { verifyToken } from '../utils/jwt.util.js';
 
-export const authorizeUser = (req, res, next) => {
+export const authorizeAdmin = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
@@ -18,22 +18,7 @@ export const authorizeUser = (req, res, next) => {
             status: 401,
             message: verified.message,
         });
-    }
-
-    req.user = verified.user;
-
-    // if (req.user.role !== 'admin') {
-    //     next({
-    //         status: 401,
-    //         message: 'Unauthorized, admin access required',
-    //     });
-    // }
-
-    next();
-};
-
-export const authorizeAdmin = (req, res, next) => {
-    if (req.user.role !== 'admin') {
+    } else if (verified.user.role !== 'admin') {
         next({
             status: 401,
             message: 'Unauthorized, admin access required',

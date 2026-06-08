@@ -14,7 +14,6 @@ router.get('/', menuController.getMenu);
 router.post(
     '/',
     validateProductBody,
-    authMiddleware.authorizeUser,
     authMiddleware.authorizeAdmin,
     menuController.addNewProduct,
 );
@@ -23,7 +22,6 @@ router.post(
 router.put(
     '/:prodId',
     validateProductBody,
-    authMiddleware.authorizeUser,
     authMiddleware.authorizeAdmin,
     menuController.updateProduct,
 );
@@ -31,7 +29,6 @@ router.put(
 // DELETE product
 router.delete(
     '/:prodId',
-    authMiddleware.authorizeUser,
     authMiddleware.authorizeAdmin,
     menuController.removeProduct,
 );
