@@ -32,7 +32,6 @@ export const registerUser = async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: 'User registered successfully',
-            user: result.user,
         });
     } else {
         next({
@@ -57,9 +56,6 @@ export const loginUser = async (req, res, next) => {
 
     if (result.success) {
         if (await comparePassword(user.password, result.user.password)) {
-            // global.user = result.user;
-            // console.log(global.user);
-
             const token = signToken({
                 _id: result.user._id,
                 username: result.user.username,

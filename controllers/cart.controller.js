@@ -126,11 +126,3 @@ export const patchCart = async (req, res, next) => {
         });
     }
 };
-
-// Add to cart
-export const addToCart = async (req, res, next) => {
-    let activeUser = false;
-    const token = req.headers['authorization']?.split(' ')[1];
-    const verified = verifyToken(token);
-    if (verified.success) activeUser = true;
-};
